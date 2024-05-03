@@ -59,17 +59,26 @@ class VidSrcProvider : MainAPI() {
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
-    ): HomePageResponse? {
-        val home = app.get(request.data+page).parsedSafe<Page>()?.result?.map {
-                it.toSearchResponse()
-            }
-        return home?.let { newHomePageResponse(request.name, it) }
+    ): HomePageResponse {
+        val home = app.get(request.data+page).parsedSafe<Page>()?.result?.mapNotNull {
+                result -> result.toSearchResponse()
+            }?: throw ErrorLoadingException("Invalid Json response")
+        return newHomePageResponse(request.name, home)
     }
 
-    private fun Result.toSearchResponse(): SearchResponse{
-        val url = "null"
-        val name = this.title
-        return newMovieSearchResponse(name,url,TvType.Movie)
+    private fun Result.toSearchResponse(): SearchResponse? {
+        return newMovieSearchResponse(
+            title,
+            "null",
+            TvType.Movie,
+        ) {
+            this.posterUrl = getImageUrl(image)
+        }
+    }
+
+    private fun getImageUrl(link: String?): String? {
+        if (link == null) return null
+        return if (link.startsWith("/")) "https://image.tmdb.org/t/p/original/$link" else link
     }
 
 
