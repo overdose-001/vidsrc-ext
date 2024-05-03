@@ -2,6 +2,8 @@ import com.lagradost.cloudstream3.gradle.CloudstreamExtension
 import com.android.build.gradle.BaseExtension
 
 buildscript {
+//    ext.kotlin_version = '1.7.1'
+//    ext.kotlin_version = '1.5.20' // <= expected version is 1.5.1
     repositories {
         google()
         mavenCentral()
@@ -13,7 +15,7 @@ buildscript {
         classpath("com.android.tools.build:gradle:7.0.4")
         // Cloudstream gradle plugin which makes everything work and builds plugins
         classpath("com.github.recloudstream:gradle:master-SNAPSHOT")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
     }
 }
 
