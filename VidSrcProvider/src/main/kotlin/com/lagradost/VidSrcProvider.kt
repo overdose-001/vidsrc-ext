@@ -36,8 +36,8 @@ class VidSrcProvider : MainAPI() {
 
 
     data class Result (
-        @JsonProperty("id") val id: String,
-        @JsonProperty("title") val title: String,
+        @JsonProperty("id") val id: String?,
+        @JsonProperty("title") val title: String?,
         @JsonProperty("overview") val overview: String? = null,
         @JsonProperty("poster_path") val image: String? = null,
         @JsonProperty("media_type") val mediaType: String? = null,
@@ -53,14 +53,14 @@ class VidSrcProvider : MainAPI() {
 
 
     override val mainPage = mainPageOf(
-        "$tmdbBaseUrl/3/trending/movie/week?apikey=e1e99d44d3f10ad93c4b6873ccd92592&language=en-US&page=" to "Trending Movies"
+        "$tmdbBaseUrl/3/trending/movie/week?apikey=e1e99d44d3f10ad93c4b6873ccd92592&language=en-US" to "Trending Movies"
     )
 
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val home = app.get(request.data+page).parsedSafe<Page>()?.result?.mapNotNull {
+        val home = app.get("${request.data}&page=$page").parsed<Page>().result?.mapNotNull {
                 result -> result.toSearchResponse()
             }?: throw ErrorLoadingException("Invalid Json response")
         return newHomePageResponse(request.name, home)
@@ -68,8 +68,8 @@ class VidSrcProvider : MainAPI() {
 
     private fun Result.toSearchResponse(): SearchResponse? {
         return newMovieSearchResponse(
-            title,
-            "null",
+            title ?: return null,
+            mainUrl+id,
             TvType.Movie,
         ) {
             this.posterUrl = getImageUrl(image)
