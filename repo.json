@@ -1,0 +1,8 @@
+{
+  "name": "VidSrc-Beta",
+  "description": "VidSrc provider using TMDB metadata",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/overdose-001/vidsrc-ext/builds/plugins.json"
+  ]
+}
